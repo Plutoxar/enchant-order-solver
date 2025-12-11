@@ -7,6 +7,7 @@ let total_tries;
 let languageJson;
 let languageId;
 let enchants_list;
+let englishLanguageJson; 
 
 const languages = {
     'en'    : 'English',
@@ -182,7 +183,7 @@ function buildEnchantList(item_namespace_chosen) {
         enchantment_group.forEach(enchantment_namespace => {
             const enchantment_metadata = enchantments_metadata[enchantment_namespace];
             const enchantment_max_level = enchantment_metadata.levelMax;
-            const enchantment_name = languageJson.enchants[enchantment_namespace];
+            const enchantment_name = getLocalizedEnchantmentName(enchantment_namespace);
 
             const enchantment_row = $("<tr>");
             enchantment_row.addClass(group_toggle_color ? "group1" : "group2");
@@ -346,6 +347,25 @@ function displayInstructionText(instruction) {
     return instruction_text + "<br><small>" + cost_text + ", " + prior_work_text + "</small>";
 }
 
+function getLocalizedEnchantmentName(enchantment_namespace) {
+    let name = languageJson.enchants[enchantment_namespace];
+    let isFallback = false;
+
+    if (!name && englishLanguageJson) {
+        name = englishLanguageJson.enchants[enchantment_namespace];
+        isFallback = true;
+    }
+    
+    if (!name) {
+        name = enchantment_namespace;
+    }
+
+    if (isFallback) {
+        return name + ' (EN)'; 
+    }
+    return name;
+}
+
 function displayEnchantmentsText(enchants) {
     let count = enchants.length
     //let max_level = data.enchants[enchants].levelMax;
@@ -353,8 +373,12 @@ function displayEnchantmentsText(enchants) {
     let text = "";
     if (count >= 1) text += "(";
     enchants.forEach((enchant, index) => {
-        if (languageJson.enchants.hasOwnProperty(enchant)) {
+        if (englishLanguageJson.enchants.hasOwnProperty(enchant)) {
+            if (languageJson.enchants.hasOwnProperty(enchant)) {
             text += languageJson.enchants[enchant];
+        } else {
+            text += englishLanguageJson.enchants[enchant];
+        }
             if (data.enchants[enchant].levelMax > 1) {
                 text += ' ' + enchants_list.find(([entry]) => entry === enchant)[1]
             }
@@ -364,15 +388,34 @@ function displayEnchantmentsText(enchants) {
 
     });
     if (count >= 1) text += ")";
-
     return text;
+}
+
+function getLocalizedItemName(item_namespace) {
+    let name = languageJson.items[item_namespace];
+    let isFallback = false;
+
+    if (!name && englishLanguageJson) {
+        name = englishLanguageJson.items[item_namespace];
+        isFallback = true;
+    }
+
+    if (!name) {
+        name = item_namespace; // Fallback to namespace if all else fails
+    }
+
+    if (isFallback) {
+        // Mark that the name is from a different language (English)
+        return name + ' (EN)'; 
+    }
+    return name;
 }
 
 function displayItemText(item_obj) {
 
     let item_namespace;
     let enchantments_obj = [];
-    if (languageJson.enchants.hasOwnProperty(item_obj.I)) {
+    if (englishLanguageJson.enchants.hasOwnProperty(item_obj.I)) {
         enchantments_obj.push(item_obj.I)
         item_namespace = 'book'
     } else if (typeof(item_obj.I) === 'string') {
@@ -386,8 +429,8 @@ function displayItemText(item_obj) {
         item_namespace = findItemNamespace(item_obj.L)
     }
     const icon_text = '<img src="./images/' + item_namespace + '.gif" class="icon">';
-    const items_metadata = languageJson.items;
-    const item_name = items_metadata[item_namespace];
+    
+    const item_name = getLocalizedItemName(item_namespace); 
     const enchantments_text = displayEnchantmentsText(enchantments_obj);
 
     return icon_text + " " + item_name + " " + enchantments_text;
@@ -492,8 +535,9 @@ function enchantmentNamespaceFromStylized(enchantment_name) {
 
     let namespace_match = "";
     enchantment_namespaces.forEach(enchantment_namespace => {
-        const enchantment_name_check = languageJson.enchants[enchantment_namespace];
-        if (enchantment_name_check === enchantment_name) namespace_match = enchantment_namespace;
+        const enchantment_name_check = languageJson.enchants[enchantment_namespace] || englishLanguageJson.enchants[enchantment_namespace];
+        if (enchantment_name_check === enchantment_name.replace(' (EN)', '')) {
+            namespace_match = enchantment_namespace;}
     });
 
     return namespace_match;
@@ -693,6 +737,8 @@ async function setupLanguage(){
     for (const i in languages){
         $("<option/>", {'value': i}).text(languages[i]).appendTo('#language');
     }
+    englishLanguageJson = await loadJsonLanguage('en');
+
     defineBrowserLanguage();
     languageChangeListener();
 }
@@ -771,7 +817,7 @@ function changeLanguageByJson(languageJson){
 
     options[0].textContent = languageJson.choose_an_item_to_enchant;
     data.items.forEach(item_namespace => {
-        options[i].textContent = languageJson.items[item_namespace];
+        options[i].textContent = getLocalizedItemName(item_namespace);
         i++;
     });
 
