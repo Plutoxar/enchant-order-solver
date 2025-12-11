@@ -27,7 +27,7 @@ var data = {
         "breach": {
             "levelMax": "4",
             "weight": "2",
-            "incompatible": ["density", "smite", "bane_of_arthropods"],
+            "incompatible": ["density", "smite", "bane_of_arthropods", "sharpness", "impaling"],
             "items": ["mace"]
         },
         "channeling": {
@@ -39,7 +39,7 @@ var data = {
         "density": {
             "levelMax": "5",
             "weight": "1",
-            "incompatible": ["breach", "smite", "bane_of_arthropods"],
+            "incompatible": ["breach", "smite", "bane_of_arthropods", "sharpness", "impaling"],
             "items": ["mace"]
         },
         "depth_strider": {
@@ -93,7 +93,7 @@ var data = {
         "impaling": {
             "levelMax": "5",
             "weight": "2",
-            "incompatible": [],
+            "incompatible": ["density", "breach"],
             "items": ["trident"]
         },
         "infinity": {
@@ -202,7 +202,7 @@ var data = {
         "sharpness": {
             "levelMax": "5",
             "weight": "1",
-            "incompatible": ["bane_of_arthropods", "smite"],
+            "incompatible": ["bane_of_arthropods", "smite", "density", "breach"],
             "items": ["sword", "axe", "spear"]
         },
         "silk_touch": {
