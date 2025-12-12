@@ -1,3 +1,21 @@
+const ARMOR = ["boots", "chestplate", "helmet", "leggings", "turtle_shell"]
+const TOOLS = ["axe", "hoe", "pickaxe", "shovel"]
+const MISC = ['carrot_on_a_stick', 'fishing_rod', 'flint_and_steel', 'warped_fungus_on_a_stick']
+
+// Groups of enchantments, incompatible with eachother
+const PROTECTION_ENCHANTS = ["fire_protection", "protection", "projectile_protection", "blast_protection"]
+const DAMAGE_ENCHANTS = ["density", "smite", "bane_of_arthropods", "sharpness", "breach"]
+const ENCHANT_GROUPS = [PROTECTION_ENCHANTS, DAMAGE_ENCHANTS]
+
+const incompatible = (enchant) => {
+    // returns a group of enchants, without the enchant itself
+    for (group of ENCHANT_GROUPS) {
+        if (group.includes(enchant)) {
+            return group.filter(item => item !== enchant);
+        }
+    }
+}
+
 var data = {
     enchants: {
         "aqua_affinity": {
@@ -9,25 +27,25 @@ var data = {
         "bane_of_arthropods": {
             "levelMax": "5",
             "weight": "1",
-            "incompatible": ["smite", "sharpness", "density", "breach"],
+            "incompatible": incompatible("bane_of_arthropods"),
             "items": ["sword", "axe", "mace", "spear"]
         },
         "binding_curse": {
             "levelMax": "1",
             "weight": "4",
             "incompatible": [],
-            "items": ["helmet", "chestplate", "leggings", "boots", "elytra", "pumpkin", "helmet", "turtle_shell"]
+            "items": [...ARMOR, "elytra", "pumpkin"]
         },
         "blast_protection": {
             "levelMax": "4",
             "weight": "2",
-            "incompatible": ["fire_protection", "protection", "projectile_protection"],
-            "items": ["helmet", "chestplate", "leggings", "boots", "turtle_shell"]
+            "incompatible": incompatible("blast_protection"),
+            "items": ARMOR
         },
         "breach": {
             "levelMax": "4",
             "weight": "2",
-            "incompatible": ["density", "smite", "bane_of_arthropods", "sharpness", "impaling"],
+            "incompatible": [...incompatible("breach"), "impaling"],
             "items": ["mace"]
         },
         "channeling": {
@@ -39,7 +57,7 @@ var data = {
         "density": {
             "levelMax": "5",
             "weight": "1",
-            "incompatible": ["breach", "smite", "bane_of_arthropods", "sharpness", "impaling"],
+            "incompatible": [...incompatible("density"), "impaling"],
             "items": ["mace"]
         },
         "depth_strider": {
@@ -52,7 +70,7 @@ var data = {
             "levelMax": "5",
             "weight": "1",
             "incompatible": [],
-            "items": ["pickaxe", "shovel", "axe", "hoe", "shears"]
+            "items": [...TOOLS, "shears"]
         },
         "feather_falling": {
             "levelMax": "4",
@@ -69,8 +87,8 @@ var data = {
         "fire_protection": {
             "levelMax": "4",
             "weight": "1",
-            "incompatible": ["blast_protection", "protection", "projectile_protection"],
-            "items": ["helmet", "chestplate", "leggings", "boots", "turtle_shell"]
+            "incompatible": incompatible("fire_protection"),
+            "items": ARMOR
         },
         "flame": {
             "levelMax": "1",
@@ -82,7 +100,7 @@ var data = {
             "levelMax": "3",
             "weight": "2",
             "incompatible": ["silk_touch"],
-            "items": ["pickaxe", "shovel", "axe", "hoe"]
+            "items": TOOLS
         },
         "frost_walker": {
             "levelMax": "2",
@@ -142,8 +160,7 @@ var data = {
             "levelMax": "1",
             "weight": "2",
             "incompatible": ["infinity"],
-            "items": ["helmet", "chestplate", "leggings", "boots", "pickaxe", "shovel", "axe", "sword", "hoe", "brush", "fishing_rod", "bow", "shears", "flint_and_steel", 
-                "carrot_on_a_stick", "warped_fungus_on_a_stick", "shield", "elytra", "trident", "turtle_shell", "crossbow", "mace", "spear"]
+            "items": [...ARMOR, ...TOOLS, ...MISC, "sword", "brush", "bow", "shears", "shield", "elytra", "trident", "crossbow", "mace", "spear"]
         },
         "multishot": {
             "levelMax": "1",
@@ -166,14 +183,14 @@ var data = {
         "projectile_protection": {
             "levelMax": "4",
             "weight": "1",
-            "incompatible": ["protection", "blast_protection", "fire_protection"],
-            "items": ["helmet", "chestplate", "leggings", "boots", "turtle_shell"]
+            "incompatible": incompatible("projectile_protection"),
+            "items": ARMOR
         },
         "protection": {
             "levelMax": "4",
             "weight": "1",
-            "incompatible": ["blast_protection", "fire_protection", "projectile_protection"],
-            "items": ["helmet", "chestplate", "leggings", "boots", "turtle_shell"]
+            "incompatible": incompatible("protection"),
+            "items": ARMOR
         },
         "punch": {
             "levelMax": "2",
@@ -202,19 +219,19 @@ var data = {
         "sharpness": {
             "levelMax": "5",
             "weight": "1",
-            "incompatible": ["bane_of_arthropods", "smite", "density", "breach"],
+            "incompatible": incompatible("sharpness"),
             "items": ["sword", "axe", "spear"]
         },
         "silk_touch": {
             "levelMax": "1",
             "weight": "4",
             "incompatible": ["fortune"],
-            "items": ["pickaxe", "shovel", "axe", "hoe"]
+            "items": TOOLS
         },
         "smite": {
             "levelMax": "5",
             "weight": "1",
-            "incompatible": ["bane_of_arthropods", "sharpness", "density", "breach"],
+            "incompatible": incompatible("smite"),
             "items": ["sword", "axe", "mace", "spear"]
         },
         "soul_speed": {
@@ -239,21 +256,19 @@ var data = {
             "levelMax": "3",
             "weight": "4",
             "incompatible": [],
-            "items": ["helmet", "chestplate", "leggings", "boots", "turtle_shell"]
+            "items": ARMOR
         },
         "unbreaking": {
             "levelMax": "3",
             "weight": "1",
             "incompatible": [],
-            "items": ["helmet", "chestplate", "leggings", "boots", "pickaxe", "shovel", "axe", "sword", "hoe", "brush", "fishing_rod", "bow", "shears", "flint_and_steel", 
-                "carrot_on_a_stick", "warped_fungus_on_a_stick", "shield", "elytra", "trident", "turtle_shell", "crossbow", "mace", "spear"]
+            "items": [...ARMOR, ...TOOLS, ...MISC, "sword", "brush", "bow", "shears", "shield", "elytra", "pumpkin", "trident", "crossbow", "mace", "spear"]
         },
         "vanishing_curse": {
             "levelMax": "1",
             "weight": "4",
             "incompatible": [],
-            "items": ["helmet", "chestplate", "leggings", "boots", "pickaxe", "shovel", "axe", "sword", "hoe", "brush", "fishing_rod", "bow", "shears", "flint_and_steel", 
-                "carrot_on_a_stick", "warped_fungus_on_a_stick", "shield", "elytra", "pumpkin", "helmet", "trident", "turtle_shell", "crossbow", "mace", "spear"]
+            "items": [...ARMOR, ...TOOLS, ...MISC, "sword", "brush", "bow", "shears", "shield", "elytra", "pumpkin", "trident", "crossbow", "mace", "spear"]
         },
         "wind_burst": {
             "levelMax": "3",
@@ -264,14 +279,9 @@ var data = {
     },
 
     items: [
-        'boots',
-        'chestplate',
-        'helmet',
-        'leggings',
+        ...ARMOR,
         'elytra',
-        'turtle_shell',
 
-        'axe',
         'bow',
         'crossbow',
         'mace',
@@ -280,17 +290,12 @@ var data = {
         'sword',
         'trident',
 
+        ...TOOLS,
         'brush',
-        'hoe',
-        'pickaxe',
-        'shovel',
-
-        'carrot_on_a_stick',
-        'fishing_rod',
-        'flint_and_steel',
-        'pumpkin',
         'shears',
-        'warped_fungus_on_a_stick',
+
+        ...MISC,
+        'pumpkin',
         'book'
     ]
 };
